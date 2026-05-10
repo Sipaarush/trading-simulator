@@ -1,0 +1,98 @@
+# ============================================================
+# Real-Time AI Trading Simulator — Configuration
+# ============================================================
+# 'auto' values are replaced at runtime by hardware_profile.py
+# Do NOT manually edit 'auto' fields — they adapt to your hardware.
+
+# --- Hardware Detection ---
+hardware:
+  auto_detect: true
+  force_tier: ""          # Override: ULTRA_LOW / LOW / MID / HIGH (leave empty for auto)
+
+# --- Model Settings ---
+model:
+  device: "auto"           # 'auto', 'cuda', or 'cpu'
+  model_size: "auto"       # 'auto', 'yolov8n', or 'yolov8s'
+  model_path: "models/best.pt"
+  img_size: 640            # Overridden per tier (416 or 640)
+  half_precision: "auto"   # 'auto', true, or false
+  confidence_threshold: 0.65
+
+# --- Screen Capture ---
+capture:
+  region:
+    top: 0
+    left: 0
+    width: 1280
+    height: 720
+  interval_ms: 500         # Overridden per tier
+
+# --- OCR ---
+ocr:
+  tesseract_config: "--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789.,"
+  sanity_threshold: 0.20   # Discard if price deviates >20% from last known
+
+# --- Detection ---
+detection:
+  dual_confirm: true       # Both YOLOv8 AND TA-Lib must agree
+  min_confidence: 0.60
+
+# --- Indicators ---
+indicators:
+  num_workers: 4           # Parallel CPU workers
+  sma_periods: [20, 50, 200]
+  ema_periods: [9, 21]
+  rsi_period: 14
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  bb_period: 20
+  bb_std: 2
+  atr_period: 14
+  stoch_k: 14
+  stoch_d: 3
+  stoch_smooth: 3
+  cci_period: 14
+  willr_period: 14
+  roc_period: 10
+  mfi_period: 14
+  adx_period: 14
+
+# --- Signal Engine ---
+signals:
+  min_confluence_score: 5.0
+  weights:
+    yolov8: 3.0
+    talib: 2.5
+    volume: 2.0
+    rsi_extreme: 2.0
+    macd: 2.0
+    ma_align: 1.5
+    fibonacci: 1.5
+    bb_position: 1.0
+    adx_trend: 1.0
+
+# --- Risk Calculator ---
+risk:
+  atr_multiplier: 1.5
+  min_rr_ratio: 1.5
+  base_win_rate: 0.55
+  max_success_pct: 85
+  max_risk_pct: 2.0
+  account_balance: 100000
+
+# --- Dashboard ---
+dashboard:
+  refresh_ms: 600          # Overridden per tier (600 MID, 1000 LOW, 1500 ULTRA_LOW)
+  layout: "wide"
+  history_limit: 50
+
+# --- Alerts ---
+alerts:
+  telegram_enabled: true
+  desktop_enabled: true
+
+# --- Database ---
+database:
+  path: "signals.db"
+  table_name: "trade_signals"
