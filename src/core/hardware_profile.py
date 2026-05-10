@@ -49,7 +49,9 @@ def _detect_gpu() -> tuple[bool, str, float]:
         import torch
         if torch.cuda.is_available():
             gpu_name = torch.cuda.get_device_name(0)
-            vram_bytes = torch.cuda.get_device_properties(0).total_mem
+            props = torch.cuda.get_device_properties(0)
+            # Handle both old (total_mem) and new (total_memory) PyTorch API
+            vram_bytes = getattr(props, 'total_memory', None) or getattr(props, 'total_mem', 0)
             vram_gb = round(vram_bytes / (1024 ** 3), 2)
             return True, gpu_name, vram_gb
     except ImportError:
